@@ -1,0 +1,42 @@
+#!/bin/bash
+
+BEEPS=5
+MIN_DELAY=30
+MAX_DELAY=1800
+INITIAL_DELAY=60
+
+alert ()
+{
+	for i in `seq 1 $BEEPS`; do
+		printf '\7';
+		sleep 1;
+	done &
+}
+
+delay=$INITIAL_DELAY
+
+main ()
+{
+	while true; do
+		echo "${delay}s until next prompt..."
+		sleep $delay
+		alert
+
+		printf "Were you productive? (y/n) "
+		read response
+
+		if [ "$response" == "y" ]; then
+			delay=$((delay * 2))
+		else
+			delay=$((delay / 2))
+		fi
+
+		if [ "$delay" -lt "$MIN_DELAY" ]; then
+			delay=$MIN_DELAY
+		elif [ "$delay" -gt "$MAX_DELAY" ]; then
+			delay=$MAX_DELAY
+		fi
+	done
+}
+
+main
